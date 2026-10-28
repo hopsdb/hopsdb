@@ -1,6 +1,6 @@
 # HopsDB
 
-[English](README.md)
+[English](README.md) · [日本語](README.ja.md)
 
 基于 Tauri 2、React、TypeScript 和 Rust 的 SSH 优先桌面数据库客户端。
 先连接 SSH 主机，再进入该主机上的数据库命令行客户端，在桌面界面中编辑 SQL、

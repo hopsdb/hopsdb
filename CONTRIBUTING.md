@@ -1,7 +1,9 @@
 # Contributing to HopsDB
 
-Issues and pull requests in English or Chinese are welcome. For security issues,
-follow [SECURITY.md](SECURITY.md) instead of opening a public issue.
+Issues and pull requests in English, Chinese, or Japanese are welcome.
+英語・中国語・日本語での Issue / Pull Request を歓迎します。
+
+For security issues, follow [SECURITY.md](SECURITY.md) instead of opening a public issue.
 
 ## Before changing code
 

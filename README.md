@@ -1,6 +1,6 @@
 # HopsDB
 
-[简体中文](README.zh-CN.md)
+[简体中文](README.zh-CN.md) · [日本語](README.ja.md)
 
 An SSH-first desktop database client built with Tauri 2, React, TypeScript, and Rust.
 Connect to an SSH host, enter a database command-line client on that host, and work
