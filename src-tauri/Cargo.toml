@@ -1,6 +1,6 @@
 [package]
 name = "hopsdb-app"
-version = "0.1.0"
+version = "1.0.0"
 description = "HopsDB - SSH remote database management tool"
 authors = ["zhangbiao"]
 edition = "2021"

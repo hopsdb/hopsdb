@@ -1,0 +1,91 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish-tauri:
+    name: Build (${{ matrix.name }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macos-aarch64
+            platform: macos-latest
+            args: '--target aarch64-apple-darwin'
+          - name: macos-x86_64
+            platform: macos-latest
+            args: '--target x86_64-apple-darwin'
+          - name: linux-x86_64
+            platform: ubuntu-24.04
+            args: ''
+          - name: windows-x86_64
+            platform: windows-latest
+            args: ''
+    runs-on: ${{ matrix.platform }}
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install Linux system dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential pkg-config libssl-dev \
+            libwebkit2gtk-4.1-dev libxdo-dev \
+            libayatana-appindicator3-dev librsvg2-dev patchelf
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      - name: Install locked frontend dependencies
+        run: npm ci
+
+      - name: Build and upload release assets
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: 'HopsDB v__VERSION__'
+          releaseBody: |
+            Early alpha release of HopsDB — an SSH-first desktop database client.
+
+            **Highlights**
+            - Connect over SSH and run SQL on the remote host (sqlplus / mysql / psql)
+            - No local port forwarding required — useful when tunnels are blocked
+
+            **Install notes**
+            - Builds are **unsigned** (no Apple notarization / Windows code signing yet)
+            - On macOS Apple Silicon, Gatekeeper may quarantine unsigned downloads; see SECURITY.md and allow the app if you trust the source
+            - Prefer the installer for your OS from the assets below
+
+            See [SECURITY.md](https://github.com/hopsdb/hopsdb/blob/main/SECURITY.md) for known alpha limitations.
+          releaseDraft: false
+          prerelease: true
+          args: ${{ matrix.args }}

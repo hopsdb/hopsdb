@@ -1,7 +1,7 @@
 {
   "name": "hopsdb-app",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "An SSH-first desktop database client built with Tauri, React, and Rust.",
   "license": "Apache-2.0",
   "type": "module",
