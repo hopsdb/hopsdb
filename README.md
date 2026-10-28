@@ -10,8 +10,40 @@ with SQL results in a desktop UI. HopsDB is not a direct database-driver client.
 accounts first. Read the [security limitations](SECURITY.md) before connecting to
 real systems; the current version is not recommended for sensitive production use.
 
+## Why HopsDB
+
+Most GUI database clients expect a **TCP path to the database** — often by opening
+an SSH **local port forward** (`ssh -L`) so `localhost:1521` (or similar) reaches a
+private DB. That breaks when:
+
+- the network or security policy **forbids port forwarding**
+- you can SSH to a bastion / app host, but **cannot** publish the DB port locally
+- the database only listens on **`127.0.0.1` inside the remote host** (or inside a
+  container you enter over SSH)
+
+HopsDB takes a different path: it keeps a normal **SSH session**, runs
+`sqlplus` / `mysql` / `psql` **on that remote host**, and turns the CLI output into
+a desktop SQL UI. **No local DB port forward is required.** Nested SSH hops are
+supported when you must jump before opening the client.
+
+![Traditional clients need a local port forward; HopsDB runs the DB CLI over SSH with no local forward](docs/no-port-forward.svg)
+
+```mermaid
+flowchart LR
+  subgraph traditional ["Traditional GUI client"]
+    A1[Laptop GUI] -->|TCP to localhost| L[Local forward -L]
+    L -->|SSH tunnel| J1[Bastion]
+    J1 --> DB1[(Database)]
+  end
+  subgraph hopsdb ["HopsDB"]
+    A2[HopsDB UI] -->|SSH only| J2[Remote host]
+    J2 -->|sqlplus / mysql / psql| DB2[(Database)]
+  end
+```
+
 ## Features
 
+- **No local port forwarding** — SQL via remote CLI over SSH when tunnels are blocked or unavailable.
 - Saved SSH connections and multi-step startup commands, including nested SSH.
 - Multiple independent connection workspaces and SQL tabs.
 - SQL editing, completion, formatting, result-column resizing, and CSV/Excel export.

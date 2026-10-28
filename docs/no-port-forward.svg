@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="920" height="420" viewBox="0 0 920 420" role="img" aria-labelledby="title desc">
+  <title id="title">HopsDB vs traditional clients — no local port forward</title>
+  <desc id="desc">Traditional DB clients open a local port forward over SSH. HopsDB runs the database CLI on the remote host over SSH, so no local DB port is exposed.</desc>
+  <defs>
+    <style>
+      .box { fill:#f8fafc; stroke:#334155; stroke-width:2; rx:10; }
+      .box-h { fill:#e2e8f0; stroke:#334155; stroke-width:2; rx:10; }
+      .box-db { fill:#ecfdf5; stroke:#047857; stroke-width:2; rx:10; }
+      .box-app { fill:#eff6ff; stroke:#1d4ed8; stroke-width:2; rx:10; }
+      .lbl { font:600 14px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif; fill:#0f172a; }
+      .sub { font:12px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif; fill:#475569; }
+      .title { font:700 16px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif; fill:#0f172a; }
+      .bad { font:600 12px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif; fill:#b91c1c; }
+      .good { font:600 12px -apple-system,BlinkMacSystemFont,Segoe UI,sans-serif; fill:#047857; }
+      .arrow { stroke:#334155; stroke-width:2; fill:none; marker-end:url(#m); }
+      .arrow-bad { stroke:#b91c1c; stroke-width:2; stroke-dasharray:6 4; fill:none; marker-end:url(#mb); }
+    </style>
+    <marker id="m" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#334155"/></marker>
+    <marker id="mb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#b91c1c"/></marker>
+  </defs>
+  <rect width="920" height="420" fill="#ffffff"/>
+
+  <!-- Traditional -->
+  <text class="title" x="24" y="32">Traditional client (needs local port forward)</text>
+  <rect class="box-app" x="24" y="52" width="150" height="64"/>
+  <text class="lbl" x="40" y="80">Your laptop</text>
+  <text class="sub" x="40" y="98">GUI DB client</text>
+
+  <rect class="box-h" x="230" y="52" width="170" height="64"/>
+  <text class="lbl" x="246" y="80">localhost:1521</text>
+  <text class="sub" x="246" y="98">SSH -L forward</text>
+
+  <rect class="box" x="460" y="52" width="160" height="64"/>
+  <text class="lbl" x="476" y="80">Jump / bastion</text>
+  <text class="sub" x="476" y="98">SSH tunnel hop</text>
+
+  <rect class="box-db" x="680" y="52" width="210" height="64"/>
+  <text class="lbl" x="696" y="80">Database</text>
+  <text class="sub" x="696" y="98">private network only</text>
+
+  <path class="arrow" d="M174 84 H230"/>
+  <path class="arrow" d="M400 84 H460"/>
+  <path class="arrow" d="M620 84 H680"/>
+  <text class="bad" x="24" y="140">Fails when port forwarding is blocked, policy-forbidden, or the DB is only reachable as localhost on the remote host.</text>
+
+  <!-- HopsDB -->
+  <text class="title" x="24" y="200">HopsDB (no local port forward)</text>
+  <rect class="box-app" x="24" y="220" width="150" height="64"/>
+  <text class="lbl" x="40" y="248">Your laptop</text>
+  <text class="sub" x="40" y="266">HopsDB UI</text>
+
+  <rect class="box" x="280" y="220" width="220" height="64"/>
+  <text class="lbl" x="296" y="248">SSH session</text>
+  <text class="sub" x="296" y="266">nested hops OK</text>
+
+  <rect class="box-db" x="600" y="220" width="290" height="64"/>
+  <text class="lbl" x="616" y="248">Remote sqlplus / mysql / psql</text>
+  <text class="sub" x="616" y="266">talks to DB where it already lives</text>
+
+  <path class="arrow" d="M174 252 H280"/>
+  <path class="arrow" d="M500 252 H600"/>
+  <text class="good" x="24" y="310">No localhost listener. SQL runs on the remote host over SSH — works when you can SSH but cannot (or must not) open a tunnel to the DB port.</text>
+
+  <rect x="24" y="340" width="872" height="56" rx="10" fill="#f1f5f9" stroke="#cbd5e1"/>
+  <text class="sub" x="40" y="364">Built for jump hosts, locked-down clouds, and “DB only on 127.0.0.1 inside the server” setups.</text>
+  <text class="sub" x="40" y="384">HopsDB is a remote-CLI UI, not a local JDBC/ODBC driver client.</text>
+</svg>
